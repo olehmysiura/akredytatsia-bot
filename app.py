@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hmac
 import logging
+import os
 
 from flask import Flask, jsonify, request
 
@@ -31,6 +32,11 @@ def index():
         "token_set": bool(core.env("BOT_TOKEN")),
         "secret_set": bool(core.env("WEBHOOK_SECRET")),
         "database_connected": core.STORE.persistent,
+        # Діагностика: лише назви змінних і тип середовища, без значень
+        "vercel_env": os.environ.get("VERCEL_ENV"),
+        "commit": (os.environ.get("VERCEL_GIT_COMMIT_SHA") or "")[:7],
+        "env_names": sorted(k for k in os.environ if k.startswith(
+            ("BOT_", "WEBHOOK", "ADMIN", "KV_", "REDIS", "UPSTASH"))),
     })
 
 
